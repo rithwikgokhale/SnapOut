@@ -1,0 +1,590 @@
+{
+  "recommended_agent_count": 6,
+  "agents": [
+    {
+      "id": "agent_1",
+      "name": "Shell Foundation",
+      "mission": "Build the entire project skeleton so all other agents have a compiling, navigable, architecturally correct starting point.",
+      "owned_packages": [
+        "App/",
+        "Packages/DomainModels/",
+        "Packages/AppCore/",
+        "Packages/DesignSystem/",
+        "Packages/Persistence/ (stubs)",
+        "Packages/ZipAccess/ (stubs)",
+        "Packages/PhotosAccess/ (stubs)",
+        "Packages/ImportEngine/ (stubs)",
+        "Packages/DedupeEngine/ (stubs)",
+        "Packages/Diagnostics/ (stubs)",
+        "Packages/SharedTestSupport/ (scaffold)",
+        "All Packages/Feature*/ (placeholder screens)"
+      ],
+      "primary_files": [
+        "SnapOut.xcodeproj",
+        "App/SnapOutApp.swift",
+        "App/DependencyContainer.swift",
+        "App/RootNavigation.swift",
+        "App/AppCoordinator.swift",
+        "App/AppEnvironment.swift",
+        "All DomainModels types and enums",
+        "All AppCore protocols",
+        "All DesignSystem tokens and components",
+        "Persistence/Database/ (schema, migrations)",
+        "All Feature*/ placeholder screens"
+      ],
+      "allowed_to_touch": ["Everything — creates all files"],
+      "should_avoid": ["Implementing real business logic"],
+      "depends_on": [],
+      "outputs": [
+        "Compiling Xcode project",
+        "All SPM packages with correct dependency graph",
+        "All protocols defined in AppCore",
+        "All domain models defined in DomainModels",
+        "GRDB schema + migrations + empty store shells",
+        "DesignSystem tokens + all shared components",
+        "All 10 placeholder screens wired into NavigationStack",
+        "DI container with stub registrations",
+        "docs/shell_milestone_summary.md"
+      ],
+      "risks": [
+        "SPM package graph resolution issues",
+        "Xcode project configuration complexity",
+        "Getting dependency graph correct on first try"
+      ]
+    },
+    {
+      "id": "agent_2",
+      "name": "Persistence & State",
+      "mission": "Turn all GRDB store stubs into working implementations. Deliver the full persistence layer that every other agent depends on.",
+      "owned_packages": [
+        "Packages/Persistence/Sources/Persistence/Stores/",
+        "Packages/Persistence/Sources/Persistence/Adapters/",
+        "Packages/Persistence/Sources/Persistence/Database/ (refinements)",
+        "Packages/SharedTestSupport/ (mock stores)"
+      ],
+      "primary_files": [
+        "GRDBImportSessionStore.swift",
+        "GRDBParsedRecordStore.swift",
+        "GRDBImportAssetStore.swift",
+        "GRDBDuplicateCandidateStore.swift",
+        "GRDBImportFailureStore.swift (new)",
+        "GRDBDiagnosticEventStore.swift (new)",
+        "GRDBAppSettingsStore.swift (new)",
+        "RecordMappers.swift",
+        "SharedTestSupport mock stores"
+      ],
+      "allowed_to_touch": [
+        "Packages/Persistence/",
+        "Packages/SharedTestSupport/",
+        "Packages/AppCore/ (method additions only, with approval)"
+      ],
+      "should_avoid": [
+        "App/",
+        "All Feature packages",
+        "ZipAccess",
+        "PhotosAccess",
+        "ImportEngine",
+        "DedupeEngine",
+        "Diagnostics",
+        "DesignSystem"
+      ],
+      "depends_on": ["agent_1"],
+      "outputs": [
+        "All store protocols fully implemented with real GRDB queries",
+        "Checkpoint read/write support",
+        "Batch insert/update support",
+        "Index optimizations",
+        "Mock store implementations in SharedTestSupport",
+        "Persistence unit tests"
+      ],
+      "risks": [
+        "GRDB API learning curve",
+        "Migration versioning if schema needs adjustment",
+        "Performance on large record sets"
+      ]
+    },
+    {
+      "id": "agent_3",
+      "name": "Source Intake & Parser",
+      "mission": "Build the source acquisition pipeline (ZIP and folder) and the export parser. Deliver everything from user picks a file through health report is displayed.",
+      "owned_packages": [
+        "Packages/ZipAccess/",
+        "Packages/ImportEngine/Sources/ImportEngine/Parsing/",
+        "Packages/ImportEngine/Sources/ImportEngine/Metadata/",
+        "Packages/ImportEngine/Sources/ImportEngine/Planning/HealthReportBuilder.swift",
+        "Packages/FeatureImportSource/",
+        "Packages/FeatureExportHealth/"
+      ],
+      "primary_files": [
+        "ZIPImportSourceAccessor.swift",
+        "FolderImportSourceAccessor.swift",
+        "SecurityScopedAccess.swift",
+        "ImportSourceHandle.swift",
+        "SnapchatExportScanner.swift",
+        "SnapchatExportParser.swift",
+        "ExportStructureValidator.swift",
+        "MetadataResolver.swift",
+        "HealthReportBuilder.swift",
+        "FeatureImportSource screen and view model",
+        "FeatureExportHealth screen and view model"
+      ],
+      "allowed_to_touch": [
+        "Packages/ZipAccess/",
+        "Packages/ImportEngine/Sources/ImportEngine/Parsing/",
+        "Packages/ImportEngine/Sources/ImportEngine/Metadata/",
+        "Packages/ImportEngine/Sources/ImportEngine/Planning/HealthReportBuilder.swift",
+        "Packages/FeatureImportSource/",
+        "Packages/FeatureExportHealth/",
+        "App/DependencyContainer.swift (ZipAccess + parser registrations only)"
+      ],
+      "should_avoid": [
+        "Packages/ImportEngine/Sources/ImportEngine/Execution/",
+        "Packages/ImportEngine/Sources/ImportEngine/Planning/ImportPlanner.swift",
+        "Packages/ImportEngine/Sources/ImportEngine/Planning/ImportBatchBuilder.swift",
+        "Packages/PhotosAccess/",
+        "Packages/DedupeEngine/",
+        "Packages/Persistence/ (use via protocols)"
+      ],
+      "depends_on": ["agent_1", "agent_2"],
+      "blocked_by": "Sample Snapchat export data (for real parser internals and parser tests)",
+      "outputs": [
+        "Working ZIP and folder source access",
+        "Security-scoped bookmark persistence",
+        "Export structure validation",
+        "Manifest discovery and record parsing",
+        "Metadata resolution with confidence scoring",
+        "Health report generation",
+        "FeatureImportSource wired to real document picker",
+        "FeatureExportHealth wired to real scan data",
+        "docs/parser_milestone_summary.md",
+        "docs/parser_known_limits.md"
+      ],
+      "risks": [
+        "Blocked on sample data for parser internals",
+        "Security-scoped URL edge cases",
+        "ZIPFoundation memory usage on large archives"
+      ]
+    },
+    {
+      "id": "agent_4",
+      "name": "Photos & Import Execution",
+      "mission": "Build the PhotoKit integration layer and the import execution pipeline. Deliver everything from import plan is built through assets are saved to Photos with checkpointing.",
+      "owned_packages": [
+        "Packages/PhotosAccess/",
+        "Packages/ImportEngine/Sources/ImportEngine/Planning/ImportPlanner.swift",
+        "Packages/ImportEngine/Sources/ImportEngine/Planning/ImportBatchBuilder.swift",
+        "Packages/ImportEngine/Sources/ImportEngine/Execution/",
+        "Packages/ImportEngine/Sources/ImportEngine/Support/",
+        "Packages/FeaturePermissions/",
+        "Packages/FeatureImportOptions/",
+        "Packages/FeatureImportProgress/"
+      ],
+      "primary_files": [
+        "PhotoLibraryAuthorizer.swift",
+        "AuthorizationMapper.swift",
+        "PhotoLibraryQueryService.swift",
+        "AlbumService.swift",
+        "PhotoAssetWriter.swift",
+        "PhotoLibraryDeletionService.swift",
+        "ImportPlanner.swift",
+        "ImportBatchBuilder.swift",
+        "ImportExecutor.swift",
+        "ResumeEngine.swift",
+        "WorkingDirectoryManager.swift",
+        "ImportProgressEmitter.swift",
+        "FeaturePermissions screen and view model",
+        "FeatureImportOptions screen and view model",
+        "FeatureImportProgress screen and view model"
+      ],
+      "allowed_to_touch": [
+        "Packages/PhotosAccess/",
+        "Packages/ImportEngine/Sources/ImportEngine/Planning/ImportPlanner.swift",
+        "Packages/ImportEngine/Sources/ImportEngine/Planning/ImportBatchBuilder.swift",
+        "Packages/ImportEngine/Sources/ImportEngine/Execution/",
+        "Packages/ImportEngine/Sources/ImportEngine/Support/",
+        "Packages/FeaturePermissions/",
+        "Packages/FeatureImportOptions/",
+        "Packages/FeatureImportProgress/",
+        "App/DependencyContainer.swift (PhotosAccess + execution registrations only)"
+      ],
+      "should_avoid": [
+        "Packages/ImportEngine/Sources/ImportEngine/Parsing/",
+        "Packages/ImportEngine/Sources/ImportEngine/Metadata/",
+        "Packages/ZipAccess/",
+        "Packages/DedupeEngine/",
+        "Packages/Persistence/ (use via protocols)"
+      ],
+      "depends_on": ["agent_1", "agent_2"],
+      "outputs": [
+        "Full PhotoKit authorization flow",
+        "Master album 'Snapchat Memories' creation",
+        "Asset save path with metadata application",
+        "Chunked batch import execution",
+        "Checkpoint/resume engine",
+        "Working directory management",
+        "Import progress emission",
+        "FeaturePermissions wired to real auth",
+        "FeatureImportOptions wired to real plan",
+        "FeatureImportProgress wired to real execution",
+        "docs/import_execution_milestone_summary.md"
+      ],
+      "risks": [
+        "PhotoKit write reliability",
+        "Crash-before-checkpoint reconciliation",
+        "Memory pressure on large video assets",
+        "Permission revocation mid-import"
+      ]
+    },
+    {
+      "id": "agent_5",
+      "name": "Dedupe & Review",
+      "mission": "Build the duplicate detection engine and the three-phase review UI. Deliver pre-import decisioning, post-import review, and destructive delete review as distinct flows.",
+      "owned_packages": [
+        "Packages/DedupeEngine/",
+        "Packages/FeatureDuplicateReview/"
+      ],
+      "primary_files": [
+        "CandidateNarrower.swift",
+        "AssetFingerprinting.swift",
+        "DuplicateClassifier.swift",
+        "DuplicateReasonBuilder.swift",
+        "FeatureDuplicateReview screens and view model"
+      ],
+      "allowed_to_touch": [
+        "Packages/DedupeEngine/",
+        "Packages/FeatureDuplicateReview/",
+        "App/DependencyContainer.swift (DedupeEngine registrations only)",
+        "Packages/AppCore/ (DuplicateAnalyzing/DuplicateReviewActing adjustments only, with approval)"
+      ],
+      "should_avoid": [
+        "Packages/PhotosAccess/ (use via protocols)",
+        "Packages/Persistence/ (use via protocols)",
+        "Packages/ImportEngine/",
+        "Packages/ZipAccess/",
+        "Other Feature packages"
+      ],
+      "depends_on": ["agent_1", "agent_2", "agent_4"],
+      "depends_on_detail": {
+        "agent_4": "Needs PhotosLibraryQuerying implementation for library candidate reads. Needs PhotoLibraryDeletionService for destructive delete review."
+      },
+      "outputs": [
+        "Coarse library index population",
+        "Candidate narrowing",
+        "Exact fingerprint verification (SHA-256)",
+        "Perceptual hash computation",
+        "Confidence scoring and reason codes",
+        "Three-phase review UI: pre-import decisioning, post-import review, destructive delete review",
+        "Review card UI with comparison and confidence display",
+        "docs/dedupe_milestone_summary.md"
+      ],
+      "risks": [
+        "iCloud-backed assets not locally available",
+        "Large library indexing performance",
+        "Perceptual hash quality (requires human review)",
+        "Confidence thresholds (requires human review)"
+      ]
+    },
+    {
+      "id": "agent_6",
+      "name": "Completion, Diagnostics & Hardening",
+      "mission": "Build the completion/success flow, diagnostics system, settings screen, resume banner, and harden the app for 20 GB-scale imports.",
+      "owned_packages": [
+        "Packages/Diagnostics/",
+        "Packages/FeatureImportSuccess/",
+        "Packages/FeatureSettings/",
+        "Packages/FeatureWelcome/ (resume banner only)"
+      ],
+      "primary_files": [
+        "DiagnosticsLogger.swift",
+        "SessionSummaryBuilder.swift",
+        "FailureSummaryBuilder.swift",
+        "DiagnosticBundleBuilder.swift",
+        "FeatureImportSuccess screen and view model",
+        "FeatureSettings screen and view model",
+        "FeatureWelcome resume banner"
+      ],
+      "allowed_to_touch": [
+        "Packages/Diagnostics/",
+        "Packages/FeatureImportSuccess/",
+        "Packages/FeatureSettings/",
+        "Packages/FeatureWelcome/ (resume banner only)",
+        "App/DependencyContainer.swift (Diagnostics registrations only)"
+      ],
+      "should_avoid": [
+        "Packages/ImportEngine/",
+        "Packages/DedupeEngine/",
+        "Packages/PhotosAccess/",
+        "Packages/ZipAccess/",
+        "Packages/Persistence/"
+      ],
+      "depends_on": ["agent_1", "agent_2"],
+      "depends_on_detail": {
+        "agents_3_4_5": "Success screen and diagnostics wiring needs Agents 3-5 substantially complete for real data. Diagnostics infrastructure can start in parallel."
+      },
+      "outputs": [
+        "Structured local logging",
+        "Session and failure summary generation",
+        "Diagnostic bundle export",
+        "FeatureImportSuccess wired to real ImportSummary",
+        "FeatureSettings wired to real data",
+        "Resume banner on WelcomeScreen",
+        "Temp file cleanup controls",
+        "docs/hardening_milestone_summary.md"
+      ],
+      "risks": [
+        "Diagnostics depends on real pipeline data for testing",
+        "20 GB hardening requires large test data",
+        "Edge-case matrix is large"
+      ]
+    }
+  ],
+  "sequencing": {
+    "phase_0": {
+      "label": "Foundation gate",
+      "agents": ["agent_1"],
+      "must_complete_before": ["agent_2", "agent_3", "agent_4", "agent_5", "agent_6"]
+    },
+    "phase_1": {
+      "label": "Infrastructure parallel work",
+      "agents": ["agent_2", "agent_3", "agent_4"],
+      "parallel": true,
+      "notes": "All three can start immediately after Agent 1 completes. Agent 3 ZipAccess work is unblocked; parser internals await sample data."
+    },
+    "phase_2": {
+      "label": "Dedupe + diagnostics start",
+      "agents": ["agent_5", "agent_6"],
+      "parallel": true,
+      "notes": "Agent 5 starts after Agent 4 PhotosAccess is ready. Agent 6 diagnostics infra can start in parallel; success/settings wiring overlaps with Phase 1 tail."
+    },
+    "phase_3": {
+      "label": "Integration and hardening",
+      "agents": ["agent_6"],
+      "notes": "Final pass: success screen wiring, resume banner, cleanup, 20 GB hardening. Requires all engines substantially complete."
+    }
+  },
+  "parallel_groups": [
+    {
+      "group": "Phase 1 — fully parallel",
+      "agents": ["agent_2", "agent_3", "agent_4"],
+      "reason": "Non-overlapping package ownership. Agent 2 owns Persistence stores. Agent 3 owns ZipAccess + ImportEngine/Parsing. Agent 4 owns PhotosAccess + ImportEngine/Execution."
+    },
+    {
+      "group": "Phase 2 — partially parallel",
+      "agents": ["agent_5", "agent_6"],
+      "reason": "Agent 5 depends on Agent 4 PhotosAccess but can scaffold DedupeEngine classification logic independently. Agent 6 can start Diagnostics infra independently."
+    }
+  ],
+  "dependency_edges": [
+    {
+      "from": "agent_1",
+      "to": "agent_2",
+      "type": "hard",
+      "reason": "Shell must exist before persistence can be implemented"
+    },
+    {
+      "from": "agent_1",
+      "to": "agent_3",
+      "type": "hard",
+      "reason": "Shell must exist before ZipAccess/parser work"
+    },
+    {
+      "from": "agent_1",
+      "to": "agent_4",
+      "type": "hard",
+      "reason": "Shell must exist before PhotosAccess/import work"
+    },
+    {
+      "from": "agent_2",
+      "to": "agent_3",
+      "type": "soft",
+      "reason": "Agent 3 needs working stores to persist parsed records. Can build ZipAccess while waiting."
+    },
+    {
+      "from": "agent_2",
+      "to": "agent_4",
+      "type": "soft",
+      "reason": "Agent 4 needs working stores for checkpointing. Can build PhotosAccess while waiting."
+    },
+    {
+      "from": "agent_4",
+      "to": "agent_5",
+      "type": "hard",
+      "reason": "Agent 5 needs PhotosLibraryQuerying and PhotoLibraryDeletionService implementations from Agent 4"
+    },
+    {
+      "from": "agent_2",
+      "to": "agent_5",
+      "type": "soft",
+      "reason": "Agent 5 needs working duplicate candidate store"
+    },
+    {
+      "from": "agent_3",
+      "to": "agent_5",
+      "type": "soft",
+      "reason": "Agent 5 needs ImportAsset rows with content hashes for comparison"
+    },
+    {
+      "from": "agent_2",
+      "to": "agent_6",
+      "type": "soft",
+      "reason": "Agent 6 needs persistence for session/failure queries"
+    },
+    {
+      "from": "agent_4",
+      "to": "agent_6",
+      "type": "soft",
+      "reason": "Success screen needs real import execution data"
+    },
+    {
+      "from": "agent_5",
+      "to": "agent_6",
+      "type": "soft",
+      "reason": "Success screen needs dedupe results for summary"
+    },
+    {
+      "from": "sample_data",
+      "to": "agent_3",
+      "type": "external_blocker",
+      "reason": "Real parser implementation and parser tests blocked until sample Snapchat export data is available"
+    }
+  ],
+  "shared_foundation_scope": {
+    "description": "Everything produced by Agent 1 that all other agents depend on. Must be reviewed and approved before downstream work begins.",
+    "frozen_after_shell": {
+      "appcore_protocols": [
+        "ImportSourceAccessing",
+        "SnapchatExportParsing",
+        "ExportHealthReporting",
+        "MetadataResolving",
+        "PhotosLibraryAuthorizing",
+        "PhotosLibraryQuerying",
+        "PhotosAssetWriting",
+        "DuplicateAnalyzing",
+        "DuplicateReviewActing",
+        "ImportSessionStore",
+        "ParsedRecordStore",
+        "ImportAssetStore",
+        "DuplicateCandidateStore",
+        "ImportCoordinating",
+        "DiagnosticsReporting"
+      ],
+      "domain_models": [
+        "ImportSession",
+        "ParsedSnapRecord",
+        "ImportAsset",
+        "DuplicateCandidate",
+        "LibraryAssetReference",
+        "ExportHealthReport",
+        "ImportSummary",
+        "ResolvedMetadata",
+        "DiagnosticEvent",
+        "ImportMode",
+        "ImportPhase",
+        "ImportSessionStatus",
+        "MetadataConfidence",
+        "DuplicateConfidence",
+        "DuplicateReasonCode",
+        "ImportFailureReason",
+        "CleanupState",
+        "PermissionsState"
+      ],
+      "design_system": "All tokens (AppColor, AppText, AppSpacing, AppRadius) and all shared components",
+      "database_schema": "All 8 tables and their columns",
+      "navigation_routes": "All routes in RootNavigation"
+    },
+    "change_policy": "Changes to frozen items require principal engineer coordination and approval"
+  },
+  "merge_risk_areas": [
+    {
+      "area": "App/DependencyContainer.swift",
+      "risk": "high",
+      "reason": "Every agent registers real implementations here",
+      "mitigation": "Agents add registrations in clearly marked sections. Principal engineer reviews all DI changes."
+    },
+    {
+      "area": "ImportEngine/Coordinator/ImportCoordinator.swift",
+      "risk": "high",
+      "reason": "Agents 3 and 4 both implement phases of the coordinator",
+      "mitigation": "Recommend splitting into ScanCoordinator (Agent 3) and ExecutionCoordinator (Agent 4) during shell. Top-level ImportCoordinator delegates."
+    },
+    {
+      "area": "App/RootNavigation.swift",
+      "risk": "medium",
+      "reason": "Multiple agents could modify navigation structure",
+      "mitigation": "Shell wires all routes. Agents only change their owned feature package internals."
+    },
+    {
+      "area": "AppCore protocol files",
+      "risk": "medium",
+      "reason": "Agents may need method additions",
+      "mitigation": "Freeze after shell. Changes require principal engineer approval."
+    },
+    {
+      "area": "DomainModels model files",
+      "risk": "medium",
+      "reason": "Agents may discover missing fields",
+      "mitigation": "Freeze after shell. Additions require principal engineer approval and a migration."
+    }
+  ],
+  "review_order": [
+    {
+      "order": 1,
+      "agent": "agent_1",
+      "gate": true,
+      "check": "All packages exist, dependency graph correct, protocols match brief, design system matches spec, database schema matches brief, all screens compile"
+    },
+    {
+      "order": 2,
+      "agent": "agent_2",
+      "gate": false,
+      "check": "All stores implement full protocol surface, queries correct, batch operations work, mock stores exist"
+    },
+    {
+      "order": 3,
+      "agent": "agent_3",
+      "gate": false,
+      "check": "Framework isolation respected (ZIPFoundation only in ZipAccess), protocols consumed correctly, DI registrations correct, feature screens use DesignSystem"
+    },
+    {
+      "order": 3,
+      "agent": "agent_4",
+      "gate": false,
+      "check": "Framework isolation respected (PhotoKit only in PhotosAccess), protocols consumed correctly, DI registrations correct, feature screens use DesignSystem"
+    },
+    {
+      "order": 4,
+      "agent": "agent_5",
+      "gate": false,
+      "check": "Three-phase duplicate flow correctly separated, delete review separate from keep/skip, confidence thresholds flagged for human review, library_asset_cache treated as stale-able cache"
+    },
+    {
+      "order": 5,
+      "agent": "agent_6",
+      "gate": false,
+      "check": "Success screen uses real data, diagnostics redacted, cleanup works, resume banner works, no scope expansion"
+    }
+  ],
+  "blocking_items": [
+    {
+      "item": "Agent 1 shell completion",
+      "blocks": "All other agents",
+      "type": "hard_gate"
+    },
+    {
+      "item": "Sample Snapchat export data",
+      "blocks": "Agent 3 parser internals and parser tests",
+      "type": "external_blocker"
+    },
+    {
+      "item": "Agent 4 PhotosAccess implementation",
+      "blocks": "Agent 5 real candidate narrowing and deletion review",
+      "type": "inter_agent_dependency"
+    },
+    {
+      "item": "ImportCoordinator split decision",
+      "blocks": "Clean parallel work between Agent 3 and Agent 4 on ImportEngine",
+      "type": "architectural_decision",
+      "recommendation": "Split into ScanCoordinator and ExecutionCoordinator during shell"
+    }
+  ]
+}

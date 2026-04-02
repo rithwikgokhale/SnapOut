@@ -1,0 +1,27 @@
+# --- Snapchat / PII (never commit real exports) ---
+/reference/snapchat-json/**
+!/reference/snapchat-json/.gitkeep
+
+# --- Swift Package Manager (build artifacts, checkouts, machine paths) ---
+**/.build/
+
+# --- Xcode ---
+DerivedData/
+xcuserdata/
+*.xcuserstate
+*.xccheckout
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# --- macOS ---
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# --- Environment / secrets (defense in depth) ---
+.env
+.env.*
+!.env.example

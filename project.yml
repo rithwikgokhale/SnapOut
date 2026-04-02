@@ -1,0 +1,99 @@
+name: SnapOut
+options:
+  bundleIdPrefix: com.snapout
+  deploymentTarget:
+    iOS: "17.0"
+  xcodeVersion: "15.0"
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+    TARGETED_DEVICE_FAMILY: "1"
+
+packages:
+  DomainModels:
+    path: Packages/DomainModels
+  AppCore:
+    path: Packages/AppCore
+  DesignSystem:
+    path: Packages/DesignSystem
+  Persistence:
+    path: Packages/Persistence
+  ZipAccess:
+    path: Packages/ZipAccess
+  PhotosAccess:
+    path: Packages/PhotosAccess
+  ImportEngine:
+    path: Packages/ImportEngine
+  DedupeEngine:
+    path: Packages/DedupeEngine
+  Diagnostics:
+    path: Packages/Diagnostics
+  SharedTestSupport:
+    path: Packages/SharedTestSupport
+  FeatureWelcome:
+    path: Packages/FeatureWelcome
+  FeaturePermissions:
+    path: Packages/FeaturePermissions
+  FeatureImportSource:
+    path: Packages/FeatureImportSource
+  FeatureExportHealth:
+    path: Packages/FeatureExportHealth
+  FeatureImportOptions:
+    path: Packages/FeatureImportOptions
+  FeatureImportProgress:
+    path: Packages/FeatureImportProgress
+  FeatureDuplicateReview:
+    path: Packages/FeatureDuplicateReview
+  FeatureImportSuccess:
+    path: Packages/FeatureImportSuccess
+  FeatureSettings:
+    path: Packages/FeatureSettings
+
+targets:
+  SnapOut:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: SnapOut/App
+    settings:
+      base:
+        INFOPLIST_KEY_UILaunchScreen_Generation: true
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        GENERATE_INFOPLIST_FILE: true
+        PRODUCT_BUNDLE_IDENTIFIER: com.snapout.app
+        PRODUCT_NAME: SnapOut
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_EMIT_LOC_STRINGS: true
+        NSPhotoLibraryUsageDescription: "SnapOut needs access to your photo library to import Snapchat Memories and detect duplicates."
+    dependencies:
+      - package: DomainModels
+      - package: AppCore
+      - package: DesignSystem
+      - package: Persistence
+      - package: ZipAccess
+      - package: PhotosAccess
+      - package: ImportEngine
+      - package: DedupeEngine
+      - package: Diagnostics
+      - package: FeatureWelcome
+      - package: FeaturePermissions
+      - package: FeatureImportSource
+      - package: FeatureExportHealth
+      - package: FeatureImportOptions
+      - package: FeatureImportProgress
+      - package: FeatureDuplicateReview
+      - package: FeatureImportSuccess
+      - package: FeatureSettings
+
+schemes:
+  SnapOut:
+    build:
+      targets:
+        SnapOut: all
+    run:
+      config: Debug
