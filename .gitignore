@@ -1,3 +1,8 @@
+# --- Internal planning / Cursor–LLM handoffs (local only; not public) ---
+/cursor_repo_brief.md
+/snap_import_handoff.md
+/docs/
+
 # --- Snapchat / PII (never commit real exports) ---
 /reference/snapchat-json/**
 !/reference/snapchat-json/.gitkeep

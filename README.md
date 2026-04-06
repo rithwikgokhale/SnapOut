@@ -26,7 +26,6 @@ xcodegen generate
 |------|---------|
 | `SnapOut/` | App target — composition root, navigation, wiring |
 | `Packages/` | Feature modules, domain, persistence, Photos/ZIP access, import engine, design system |
-| `docs/` | Product and architecture checkpoints (`cursor_understanding.md`, handoff notes) |
 | `reference/snapchat-json/` | **Local only** — drop personal export JSON here for parser work; **not committed** (see `.gitignore`) |
 
 ## Privacy & safety
@@ -34,14 +33,6 @@ xcodegen generate
 - Full Photos **read/write** access is required for v1 (full-library deduplication and import).
 - Duplicate **deletion** is never automatic; destructive actions are explicit and separate from import review.
 - Do not commit real Snapchat exports. Use `reference/snapchat-json/` on your machine only.
-
-## Documentation
-
-Authoritative planning and constraints live in:
-
-- `cursor_repo_brief.md`
-- `docs/cursor_understanding.md`
-- `snap_import_handoff.md`
 
 ## License
 
